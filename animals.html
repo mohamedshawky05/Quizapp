@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animal</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css">
+ <style>
+    body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+  }
+
+  h1 {
+    font-weight: bold;
+    color: #007bff;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 8px;
+  }
+
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  #progress-circle {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+  }
+
+  #progress-bar {
+    transform: rotate(-90deg);
+    transform-origin: center;
+    stroke-linecap: round;
+  }
+
+  #timer {
+    transition: color 0.5s ease;
+  }
+
+  #timer.low-time {
+    color: red;
+    font-weight: bold;
+  }
+ </style>
+</head>
+<body>
+  <div class="container my-5">
+    <h1 class="text-center mb-4">Quiz App</h1>
+    <div id="quiz-container" class="card shadow p-4">
+      <div id="question-number" class="mb-3 text-center fs-4"></div>
+      <div id="timer" class="text-center fs-5 text-danger mb-3"></div>
+      <div id="question-text" class="mb-4 text-center fs-5"></div>
+      <div id="options" class="mb-4"></div>
+      <div class="d-flex justify-content-center">
+        <button id="next-btn" class="btn btn-primary" disabled>Next</button>
+      </div>
+    </div>
+    <div id="result" class="text-center mt-4 d-none">
+      <h2>Result</h2>
+      <h4 id="username"></h4>
+      <div id="progress-circle" class="my-4">
+        <svg width="150" height="150" viewBox="0 0 36 36">
+          <path
+            d="M18 2.0845
+               a 15.9155 15.9155 0 0 1 0 31.831
+               a 15.9155 15.9155 0 0 1 0 -31.831"
+            fill="none"
+            stroke="#e6e6e6"
+            stroke-width="1"
+          />
+          <path
+            id="progress-bar"
+            d="M18 2.0845
+               a 15.9155 15.9155 0 0 1 0 31.831
+               a 15.9155 15.9155 0 0 1 0 -31.831"
+            fill="none"
+            stroke="#00aaff"
+            stroke-width="1"
+            stroke-dasharray="0, 100"
+          />
+        </svg>
+        <div id="percentage-text" style="position: relative; top: -115px; font-size: 24px; color: #007bff;"></div>
+      </div>
+      <h3 id="score-text"></h3>
+      <button id="show-answers-btn" class="btn btn-secondary">Show Answers</button>
+      <div id="answers-list" class="mt-4 d-none text-start"></div>
+    </div>
+  </div>
+<!-- Code injected by live-server -->
+<script>
+    const questions = [
+    {
+      question: "1. What is the fastest land animal in the world?",
+      options: ["A. Tiger", "B. Cheetah", "C. Horse", "D. Gazelle"],
+      correct: 1
+    },
+    {
+      question: "2-Which animal is the largest marine mammal?",
+      options: ["A. Shark", "B. Blue Whale", "C. Dolphin", "D. Seal"],
+      correct: 1
+    },
+    {
+      question: "3. Which animal is known for having an excellent memory?",
+      options: ["A. Horse", "B. Dog", "C. Elephant", "D. Crow"],
+      correct: 2
+    },
+    {
+        question: "4. Which bird is the largest in the world?",
+        options: ["A. Eagle", "B. Ostrich", "C. Albatross", "D. Penguin"],
+        correct: 1
+      },
+      {
+        question: "5. What is the only mammal capable of true flight?",
+        options: ["A. Flying Squirrel", "B. Bat", "C. Kangaroo", "D. Sugar Glider"],
+        correct: 1
+      },
+      {
+        question: "6. Which animal can change its color to blend with its surroundings?",
+        options: ["A. Chameleon", "B. Frog", "C. Snake", "D. Lizard"],
+        correct: 0
+      },
+      {
+        question: "7. What is the tallest animal in the world?",
+        options: ["A. Elephant", "B. Giraffe", "C. Camel", "D. Horse"],
+        correct: 1
+      },
+      {
+        question: "8. Which animal is known as the (King of the Jungle)?",
+        options: ["A. Tiger", "B. Lion", "C. Leopard", "D. Wolf"],
+        correct: 1
+      },
+      {
+        question: "9. What is the main food of pandas?",
+        options: ["A. Bamboo", "B. Fruits", "C. Insects", "D. Grass"],
+        correct: 0
+      },    {
+        question: "10. Which is the largest land carnivore?",
+        options: ["A. Lion", "B. Polar Bear", "C. Tiger", "D. Brown Bear"],
+        correct: 1
+      },
+      {
+        question: "11. Which animal is known to have 3 hearts?",
+        options: ["A. Squid", "B. Octopus", "C. Starfish", "D. Jellyfish"],
+        correct: 1
+      },
+      {
+        question: "12. Which bird is famous for its colorful plumage and long tail?",
+        options: ["A. Peacock", "B. Parrot", "C. Flamingo", "D. Swallow"],
+        correct: 0
+      },
+      {
+        question: "13. What is the slowest animal in the world?",
+        options: ["A. Snail", "B. Sloth", "C. Turtle", "D. Starfish"],
+        correct: 1
+      },
+      {
+        question: "14. Which animal has the longest lifespan?",
+        options: ["A. Tortoise", "B. Whale", "C. Elephant", "D. Shark"],
+        correct: 0
+      },
+      {
+        question: "15. Which mammal lays eggs?",
+        options: ["A. Platypus", "B. Kangaroo", "C. Dolphin", "D. Hedgehog"],
+        correct: 0
+      },
+      {
+        question: "16. What is a group of lions called?",
+        options: ["A. Pack", "B. Flock", "C. Pride", "D. Herd"],
+        correct: 2
+      },
+      {
+        question: "17. Which animal can survive without water for several days?",
+        options: ["A. Camel", "B. Elephant", "C. Kangaroo Rat", "D. Giraffe"],
+        correct: 0
+      },
+      {
+        question: "18. What is the largest species of fish?",
+        options: ["A. Great White Shark", "B. Whale Shark", "C. Blue Whale", "D. Hammerhead Shark"],
+        correct: 1
+      },
+      {
+        question: "19. Which bird is known for mimicking sounds, including human speech?",
+        options: ["A. Crow", "B. Parrot", "C. Nightingale", "D. Raven"],
+        correct: 1
+      },
+      {
+        question: "20. Which animal is known as the (Ship of the Desert)?",
+        options: ["A. Camel", "B. Horse", "C. Donkey", "D. Goat"],
+        correct:0
+      },
+  ];
+
+  let currentQuestion = 0;
+  let answers = Array(questions.length).fill(null);
+  let timer;
+  let timeRemaining = 60;
+
+  const questionNumberEl = document.getElementById("question-number");
+  const questionTextEl = document.getElementById("question-text");
+  const optionsEl = document.getElementById("options");
+  const nextBtn = document.getElementById("next-btn");
+  const timerEl = document.getElementById("timer");
+  const resultEl = document.getElementById("result");
+  const progressBar = document.getElementById("progress-bar");
+  const scorePercentage = document.getElementById("score-percentage");
+  const percentageText = document.getElementById("percentage-text");
+  const scoreText = document.getElementById("score-text");
+  const usernameEl = document.getElementById("username");
+  const showAnswersBtn = document.getElementById("show-answers-btn");
+  const answersList = document.getElementById("answers-list");
+
+  // Load username from LocalStorage
+  // const username = localStorage.getItem("fullName") || "fullName";
+  // usernameEl.textContent = `Hello, ${username}!`;
+
+  function startTimer() {
+    timeRemaining = 60;
+    updateTimerDisplay();
+    timer = setInterval(() => {
+      timeRemaining--;
+      updateTimerDisplay();
+
+      if (timeRemaining <= 0) {
+        clearInterval(timer);
+        nextQuestion();
+      }
+    }, 1000);
+  }
+
+  function updateTimerDisplay() {
+    timerEl.textContent = `Time Remaining: ${timeRemaining}s`;
+    if (timeRemaining <= 10) {
+      timerEl.classList.add("low-time");
+    } else {
+      timerEl.classList.remove("low-time");
+    }
+  }
+
+  function loadQuestion(index) {
+    clearInterval(timer);
+    const question = questions[index];
+    questionNumberEl.textContent = `Question ${index + 1} of ${questions.length}`;
+    questionTextEl.textContent = question.question;
+    optionsEl.innerHTML = question.options
+      .map(
+        (option, i) => `
+        <button class="btn btn-outline-primary w-100 my-1 ${
+          answers[index] === i ? "active" : ""
+        }" onclick="selectAnswer(${i})">${option}</button>
+      `
+      )
+      .join("");
+    nextBtn.disabled = answers[index] === null;
+    startTimer();
+  }
+
+  function nextQuestion() {
+    if (currentQuestion < questions.length - 1) {
+      currentQuestion++;
+      loadQuestion(currentQuestion);
+    } else {
+      showResult();
+    }
+  }
+
+  function selectAnswer(optionIndex) {
+    answers[currentQuestion] = optionIndex;
+    localStorage.setItem("quizAnswers", JSON.stringify(answers));
+    nextBtn.disabled = false;
+    clearInterval(timer);
+    loadQuestion(currentQuestion);
+  }
+
+  function showResult() {
+    const correctAnswers = answers.filter(
+      (answer, index) => answer === questions[index].correct
+    ).length;
+    const percentage = Math.round((correctAnswers / questions.length) * 100);
+
+    progressBar.style.strokeDasharray = `${percentage}, 100`;
+    percentageText.textContent = `${percentage}%`;
+    scoreText.textContent = `You answered ${correctAnswers} out of ${questions.length} questions correctly.`;
+
+    document.getElementById("quiz-container").classList.add("d-none");
+    resultEl.classList.remove("d-none");
+
+    // Add functionality to "Show Answers" button
+    showAnswersBtn.addEventListener("click", () => {
+      answersList.classList.toggle("d-none");
+      answersList.innerHTML = questions
+        .map(
+          (question, index) => `
+          <div>
+            <strong>Q${index + 1}: ${question.question}</strong><br>
+            Your Answer: ${
+              answers[index] !== null
+                ? question.options[answers[index]]
+                : "No Answer"
+            }<br>
+            Correct Answer: ${question.options[question.correct]}
+          </div><hr>
+        `
+        )
+        .join("");
+    });
+  }
+
+  nextBtn.addEventListener("click", nextQuestion);
+
+  loadQuestion(currentQuestion);
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+</body>
+</html>
